@@ -54,7 +54,7 @@ Feed any source (PDF, URL, local file) and the LLM automatically:
 - Links everything together with `[[wikilinks]]`
 
 ### 🕸️ Knowledge Graph (Zero Dependencies)
-```
+```bash
 wiki-graph.py --wiki-path ./my-wiki --report
 ```
 - Scans all wiki pages and builds `graph.json`
@@ -70,7 +70,7 @@ Every `[[wikilink]]` can be annotated:
 ```markdown
 [[Transformer]]                    ← EXTRACTED (directly from source)
 [[BERT]] (inferred)                ← LLM deduced this connection
-[[GPT-5]] (uncertain)              ← Needs verification
+[[AGI]] (uncertain)                ← Needs verification
 ```
 
 The graph tracks confidence per edge, so you can:
@@ -158,53 +158,72 @@ python3 wiki-query.py hubs
 
 Or just ask your AI agent: *"What connects X and Y in the wiki?"*
 
-## 🎬 Demo: PBRTQC Research Wiki
+## 🎬 Demo: AI History Wiki
 
-A real example — 2 literature review documents on Patient-Based Real-Time Quality Control (PBRTQC) in clinical chemistry were ingested, producing:
+A real example built with 3 source articles on AI history — producing a rich, interconnected knowledge base:
 
-### Wiki Statistics
-```
-Sources:   2     ← Literature reviews
-Entities:  8     ← Hospitals, journals, institutions
-Concepts:  18    ← Methods, metrics, frameworks
-Analysis:  1     ← Cross-paper method comparison
-─────────────────
-Total:     29 pages from 2 source documents
-```
+### Input → Output
 
-### Knowledge Graph
 ```
-Nodes:        29
-Edges:        191
-Communities:  6
-Confidence:   127 EXTRACTED (66.5%) · 64 INFERRED (33.5%)
+3 source articles (AI history, deep learning, LLM frontier)
+         │
+         ▼  LLM extracts entities + concepts
+    ┌─────────────────────────────────────────┐
+    │  Sources:   3                           │
+    │  Entities:  22  (pioneers, labs, systems)│
+    │  Concepts:  41  (algorithms, models, ...) │
+    │  Analysis:  1   (cross-paper synthesis)  │
+    │  ─────────────────────────────────────── │
+    │  Total:     67 wiki pages                │
+    └─────────────────────────────────────────┘
+         │
+         ▼  wiki-graph.py scans [[wikilinks]]
+    ┌─────────────────────────────────────────┐
+    │  Knowledge Graph                         │
+    │  Nodes:        76                        │
+    │  Edges:        469                       │
+    │  Communities:  6                         │
+    │  Confidence:   354 EXTRACTED (75.5%)     │
+    │               115 INFERRED  (24.5%)      │
+    └─────────────────────────────────────────┘
 ```
 
 ### Hub Nodes (Most Connected)
-| Node | Connections | Type |
-|------|:-----------:|------|
-| PBRTQC文献调研报告_系统间比对专题 | 46 | source |
-| PBRTQC文献研读汇报 | 44 | source |
-| **PBRTQC** | 29 | concept |
-| **EWMA** | 23 | concept |
-| **DMI** | 17 | concept |
-| mNL-PBRTQC | 15 | concept |
-| 双模块比值法 | 15 | concept |
-| 北京朝阳医院 | 13 | entity |
+
+The graph automatically identifies the most central concepts:
+
+| # | Node | Connections | Type | Why it's a hub |
+|---|------|:-----------:|------|----------------|
+| 1 | **深度学习革命** | 77 | source | Covers CNN, RNN, Transformer, GAN |
+| 2 | **人工智能简史** | 72 | source | Spans 70 years of AI milestones |
+| 3 | **大语言模型前沿** | 48 | source | LLM landscape, alignment, open source |
+| 4 | **Transformer** | 35 | concept | Foundation of modern NLP & LLMs |
+| 5 | **大语言模型** | 30 | concept | Core concept linking many models |
+| 6 | **AI范式演进** | 28 | analysis | Cross-paper synthesis page |
+| 7 | **神经网络** | 28 | concept | Foundational concept, links to all variants |
+| 8 | **杰弗里·辛顿** | 25 | entity | Deep learning pioneer, connects people & ideas |
+| 9 | **OpenAI** | 22 | entity | Links GPT, ChatGPT, RLHF, people |
+| 10 | **GPT系列** | 21 | concept | Connects models, training, alignment |
 
 ### Auto-Detected Communities
-The graph discovered 6 communities — a main cluster of 24 tightly connected nodes (the core PBRTQC research domain), plus 4 singleton nodes at the periphery (CART算法, Winsorization, ADQC, EQA) that bridge different sub-topics.
 
-### Generated GRAPH_REPORT.md Sections
-1. **Overview** — Node/edge/community counts + confidence breakdown
-2. **Hub Nodes** — Top 10 most-connected pages
-3. **Communities** — Auto-detected clusters with member lists
-4. **Unexpected Connections** — Cross-community edges (interesting bridges)
-5. **Orphan Nodes** — Pages with no connections
-6. **Suggested Questions** — Auto-generated research questions from graph structure
-7. **Stale Pages** — Pages not updated in 30+ days
+The graph discovered 6 communities — a main cluster of 71 tightly connected nodes (the core AI/deep learning domain), plus 5 singleton nodes at the periphery that bridge specialized sub-topics:
 
-> 📸 *Open this wiki in Obsidian's Graph View to see the full interactive visualization.*
+- **Community 4 (71 nodes)**: Core AI knowledge — everything from neural networks to LLMs
+- **Community 0 (1 node)**: GPT-2 — specific model variant
+- **Community 1 (1 node)**: GPT-3 — specific model variant
+- **Community 2 (1 node)**: GPT-4 — specific model variant
+- **Community 3 (1 node)**: 杰明·萨顿 — niche researcher reference
+- **Community 5 (1 node)**: Seq2Seq — specific architecture variant
+
+### What This Demonstrates
+
+- **3 articles → 67 pages**: Each source touches 15-25 wiki pages as the LLM decomposes it
+- **469 edges from wikilinks**: Dense interconnections that make exploration possible
+- **75.5% EXTRACTED + 24.5% INFERRED**: Clear separation between source-grounded and LLM-deduced knowledge
+- **Hub analysis reveals importance**: Transformer (35 connections) is more central than any single person — a data-driven insight
+
+> 📂 The full demo wiki is in `examples/ai-history-wiki/` — open it in Obsidian to see the interactive graph view.
 
 ## 🏗️ Architecture
 
@@ -274,8 +293,8 @@ The graph discovered 6 communities — a main cluster of 24 tightly connected no
 ```markdown
 ---
 type: source
-date: 2026-03-05
-tags: [PBRTQC, quality-control]
+date: 2026-04-10
+tags: [AI, history]
 ---
 
 # Paper Title
@@ -288,8 +307,8 @@ tags: [PBRTQC, quality-control]
 - Finding 2
 
 ## Entities Mentioned
-- [[Hospital A]]
-- [[Journal B]]
+- [[Person A]]
+- [[Organization B]]
 
 ## Concepts Mentioned
 - [[Method X]]
@@ -300,9 +319,9 @@ tags: [PBRTQC, quality-control]
 ```markdown
 ---
 type: entity
-category: institution
-created: 2026-03-05
-updated: 2026-03-05
+category: person
+created: 2026-04-10
+updated: 2026-04-10
 ---
 
 # Entity Name
@@ -321,8 +340,8 @@ Brief description...
 ```markdown
 ---
 type: concept
-created: 2026-03-05
-updated: 2026-03-05
+created: 2026-04-10
+updated: 2026-04-10
 ---
 
 # Concept Name
@@ -353,7 +372,7 @@ MIT
 ---
 
 <p align="center">
-  Built for <a href="https://github.com/bozhoucmu1h/hermes">Hermes Agent</a> · 
-  Works with <a href="https://obsidian.md">Obsidian</a> · 
+  Built for <a href="https://github.com/bozhoucmu1h/hermes">Hermes Agent</a> ·
+  Works with <a href="https://obsidian.md">Obsidian</a> ·
   Powered by Markdown
 </p>
